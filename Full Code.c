@@ -128,7 +128,93 @@ void createAccount() {
     saveAccountsToFile();
     printf("Account created successfully!\n");
 }
+void updateAccount() {
+    int accNo;
+    char pass[50];
+    printf("\n--- Update Account ---\n");
+    printf("Enter account number: ");
+    scanf("%d", &accNo);
+    printf("Enter password: ");
+    clearStdin();
+    fgets(pass, sizeof(pass), stdin);
+    pass[strcspn(pass, "\n")] = '\0';
 
+    for (int i = 0; i < totalAccounts; i++) {
+        if (accounts[i].accountNumber == accNo) {
+            if (strcmp(accounts[i].password, pass) == 0) {
+                printf("Enter new name: ");
+                clearStdin();
+                fgets(accounts[i].name, sizeof(accounts[i].name), stdin);
+                accounts[i].name[strcspn(accounts[i].name, "\n")] = '\0';
+
+                while (1) {
+                    printf("Enter new NID number (7 digits): ");
+                    if (scanf("%d", &accounts[i].nidNumber) != 1 || accounts[i].nidNumber < 1000000 || accounts[i].nidNumber > 9999999) {
+                        printf("Invalid NID!\n");
+                        clearStdin();
+                    } else break;
+                }
+
+                printf("Enter new password: ");
+                clearStdin();
+                fgets(accounts[i].password, sizeof(accounts[i].password), stdin);
+                accounts[i].password[strcspn(accounts[i].password, "\n")] = '\0';
+
+                saveAccountsToFile();
+                printf("Account updated successfully!\n");
+                return;
+            } else {
+                printf("Incorrect password!\n");
+                return;
+            }
+        }
+    }
+    printf("Account not found!\n");
+}
+
+void deleteAccount() {
+    int accNo;
+    char pass[50];
+    printf("\n--- Delete Account ---\n");
+    printf("Enter account number: ");
+    scanf("%d", &accNo);
+    printf("Enter password: ");
+    clearStdin();
+    fgets(pass, sizeof(pass), stdin);
+    pass[strcspn(pass, "\n")] = '\0';
+
+    for (int i = 0; i < totalAccounts; i++) {
+        if (accounts[i].accountNumber == accNo) {
+            if (strcmp(accounts[i].password, pass) == 0) {
+                for (int j = i; j < totalAccounts - 1; j++) {
+                    accounts[j] = accounts[j + 1];
+                }
+                totalAccounts--;
+                saveAccountsToFile();
+                printf("Account deleted successfully!\n");
+                return;
+            } else {
+                printf("Incorrect password!\n");
+                return;
+            }
+        }
+    }
+    printf("Account not found!\n");
+}
+void listAllAccounts() {
+    printf("\n--- List of All Accounts ---\n");
+    if (totalAccounts == 0) {
+        printf("No accounts found!\n");
+        return;
+    }
+
+    for (int i = 0; i < totalAccounts; i++) {
+        printf("\nAccount Number: %05d\n", accounts[i].accountNumber);
+        printf("Account Holder: %s\n", accounts[i].name);
+        printf("NID Number    : %07d\n", accounts[i].nidNumber);
+        printf("Balance       : $%.2f\n", accounts[i].balance);
+    }
+}
 
 
 void checkAccount() {
